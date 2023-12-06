@@ -34,4 +34,10 @@ class TokenManager {
     }
     return null;
   }
+
+  static Future<void> removeToken() async {
+    final Database database = await initTokenDatabase();
+    await database.delete('token');
+    token = '';
+  }
 }

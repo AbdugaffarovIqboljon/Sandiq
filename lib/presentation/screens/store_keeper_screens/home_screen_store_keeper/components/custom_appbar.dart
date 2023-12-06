@@ -60,9 +60,9 @@ class _CustomAppBarStoreKeeperState extends State<CustomAppBarStoreKeeper> {
             widget.onMenuTapped(true);
           },
           icon: Image(
-            image: const AssetImage("assets/icons/ic_menus.png"),
-            height: 22.sp,
-            width: 22.sp,
+            image: const AssetImage("assets/icons/ic_menu.png"),
+            height: 28.sp,
+            width: 28.sp,
             color: const Color(0xFFF6F6F3),
           ),
         ),
