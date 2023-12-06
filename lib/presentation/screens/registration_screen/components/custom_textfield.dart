@@ -1,24 +1,33 @@
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class CustomRegistrationTextField extends StatelessWidget {
   final Widget? suffixIcon;
   final Widget? prefixIcon;
   final String hinText;
   final TextInputAction textInputAction;
   final TextEditingController controller;
+  final formKey = GlobalKey<FormState>();
+  String? Function(String?)? validator;
+  bool isObscured;
 
-  const CustomRegistrationTextField({
+  CustomRegistrationTextField({
     super.key,
     this.suffixIcon,
     required this.hinText,
     this.prefixIcon,
     required this.textInputAction,
     required this.controller,
+    required this.validator,
+    required this.isObscured,
   });
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
+      obscureText: isObscured,
+      validator: validator,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       controller: controller,
       textInputAction: textInputAction,
       decoration: InputDecoration(

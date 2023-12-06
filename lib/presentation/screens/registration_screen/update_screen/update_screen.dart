@@ -24,6 +24,8 @@ class _UpdateScreenState extends State<UpdateScreen> {
   late TextEditingController fullNameController;
   late TextEditingController passwordController;
   late TextEditingController phoneController;
+  final formKey = GlobalKey<FormState>();
+  bool isObscured = true;
 
   late String savedToken;
   Map<String, dynamic> jsonData = {};
@@ -39,16 +41,15 @@ class _UpdateScreenState extends State<UpdateScreen> {
     phoneController = TextEditingController();
   }
 
-
   Future<void> getToken() async {
-    final token = await TokenManager.getToken(); // Retrieve the token from TokenManager
+    final token =
+        await TokenManager.getToken(); // Retrieve the token from TokenManager
     setState(() {
       savedToken = token ?? "null";
     });
   }
 
   Dio dio = Dio();
-
 
   void navigateToManagerHomeScreen() {
     Navigator.push(
@@ -96,6 +97,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
         navigateToLoginScreen();
       }
     } catch (e) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: const Color(0xFFC4BECD),
@@ -111,7 +113,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
           padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
         ),
       );
-      print('Error updating user information: $e');
+      debugPrint('Error updating user information: $e');
     }
   }
 
@@ -140,8 +142,13 @@ class _UpdateScreenState extends State<UpdateScreen> {
         jsonData = response.data ?? {};
       });
     } catch (e) {
-      print('Error fetching data: $e');
+      debugPrint('Error fetching data: $e');
     }
+  }
+
+  RegExp phoneNumberRegex = RegExp(r'^\+998[0-9]{9}$');
+  bool regexChecker(String text, RegExp regex) {
+    return !regex.hasMatch(text);
   }
 
   @override
@@ -172,6 +179,10 @@ class _UpdateScreenState extends State<UpdateScreen> {
 
                 /// #FullName Textfield
                 CustomRegistrationTextField(
+                  isObscured: false,
+                  validator: (value) {
+                    return null;
+                  },
                   controller: fullNameController,
                   hinText: "${jsonData['name'] ?? ''}",
                   prefixIcon: Image(
@@ -188,6 +199,13 @@ class _UpdateScreenState extends State<UpdateScreen> {
 
                 /// #Phone Textfield
                 CustomRegistrationTextField(
+                  isObscured: false,
+                  validator: (value) {
+                    if (regexChecker(value!, phoneNumberRegex)) {
+                      return 'Raqamingizni tekshiring';
+                    }
+                    return null;
+                  },
                   controller: phoneController,
                   hinText: "${jsonData['phone'] ?? ''}",
                   prefixIcon: Icon(
@@ -202,6 +220,10 @@ class _UpdateScreenState extends State<UpdateScreen> {
 
                 /// #Username Textfield
                 CustomRegistrationTextField(
+                  isObscured: false,
+                  validator: (value) {
+                    return null;
+                  },
                   controller: userNameController,
                   hinText: jsonData["username"] ?? "",
                   prefixIcon: Image(
@@ -218,6 +240,13 @@ class _UpdateScreenState extends State<UpdateScreen> {
 
                 /// #Password TextField
                 CustomRegistrationTextField(
+                  isObscured: isObscured,
+                  validator: (value) {
+                    if (passwordController.text.isEmpty) {
+                      return 'Parolni kiriting *';
+                    }
+                    return null;
+                  },
                   controller: passwordController,
                   hinText: "password".tr(),
                   prefixIcon: Image(
@@ -228,9 +257,14 @@ class _UpdateScreenState extends State<UpdateScreen> {
                     height: 28.sp,
                   ),
                   suffixIcon: IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      isObscured = !isObscured;
+                      setState(() {});
+                    },
                     icon: Image(
-                      image: const AssetImage("assets/icons/ic_eye_off.png"),
+                      image: isObscured
+                          ? const AssetImage("assets/icons/ic_eye_off.png")
+                          : const AssetImage("assets/icons/ic_eye.png"),
                       width: 28.sp,
                       height: 28.sp,
                     ),
@@ -248,7 +282,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
                     if (jsonData.isNotEmpty) {
                       updateUserInformation();
                     } else {
-                      print('jsonData is not available');
+                      debugPrint('jsonData is not available');
                     }
                   },
                 ),

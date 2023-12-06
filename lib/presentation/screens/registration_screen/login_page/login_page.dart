@@ -9,8 +9,6 @@ import 'package:sandiq/presentation/screens/registration_screen/update_screen/up
 import 'package:sandiq/presentation/screens/store_keeper_screens/main_home_screen.dart';
 import 'package:sandiq/services/user_service/token_manager.dart';
 
-
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -21,6 +19,8 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+  bool isObscured = true;
 
   void login() async {
     String username = usernameController.text;
@@ -38,7 +38,6 @@ class _LoginScreenState extends State<LoginScreen> {
         },
       );
 
-
       if (response.statusCode == 200 || response.statusCode == 201) {
         debugPrint(
           '========== SUCCESSFUL ==========\n${response.statusCode}',
@@ -54,10 +53,12 @@ class _LoginScreenState extends State<LoginScreen> {
         if (receivedData["status"] == false) {
           navigateToUpdateScreen();
         }
-        if (receivedData["status"] == true && receivedData["role"] == "s_admin") {
+        if (receivedData["status"] == true &&
+            receivedData["role"] == "s_admin") {
           navigateToMainHomeScreenStoreKeeper();
         }
-        if (receivedToken["status"] == true && receivedData["role"] == "Prorap") {
+        if (receivedToken["status"] == true &&
+            receivedData["role"] == "Prorap") {
           navigateToManagerHomeScreen();
         }
       }
@@ -94,6 +95,15 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  // RegExp passwordRegex = RegExp(
+  //   r'^(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$',
+  // );
+  RegExp nonEmptyRegex = RegExp(r'^(?!\s*$).+');
+
+  bool regexChecker(String password, RegExp regExp) {
+    return !regExp.hasMatch(password);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,73 +116,99 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15.0),
-        child: Column(
-          children: [
-            const Spacer(flex: 4),
+        child: Form(
+          key: formKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          child: Column(
+            children: [
+              const Spacer(flex: 4),
 
-            /// #Logo
-            Center(
-              child: Image(
-                image: const AssetImage("assets/images/img_sandiq_logo.png"),
-                width: 250.sp,
-              ),
-            ),
-            const Spacer(),
-
-            /// #Header Image
-            Image(
-              image: const AssetImage("assets/images/img_login_header.png"),
-              width: 320.sp,
-            ),
-            const Spacer(flex: 2),
-
-            /// #First TextField
-            CustomRegistrationTextField(
-              controller: usernameController,
-              hinText: "Username",
-              prefixIcon: Image(
-                image: const AssetImage(
-                  "assets/icons/ic_user_filled.png",
+              /// #Logo
+              Center(
+                child: Image(
+                  image: const AssetImage("assets/images/img_sandiq_logo.png"),
+                  width: 250.sp,
                 ),
-                color: const Color(0xFFA4A3A4),
-                width: 25.sp,
-                height: 25.sp,
               ),
-              textInputAction: TextInputAction.next,
-            ),
-            const Spacer(flex: 1),
+              const Spacer(),
 
-            /// #Second TextField
-            CustomRegistrationTextField(
-              controller: passwordController,
-              hinText: "enter_password".tr(),
-              prefixIcon: Image(
-                image: const AssetImage(
-                  "assets/icons/ic_lock_disabled.png",
-                ),
-                width: 28.sp,
-                height: 28.sp,
+              /// #Header Image
+              Image(
+                image: const AssetImage("assets/images/img_login_header.png"),
+                width: 320.sp,
               ),
-              suffixIcon: IconButton(
-                onPressed: () {},
-                icon: Image(
-                  image: const AssetImage("assets/icons/ic_eye_off.png"),
+              const Spacer(flex: 2),
+
+              /// #First TextField
+              CustomRegistrationTextField(
+                isObscured: false,
+                validator: (value) {
+                  if (regexChecker(value ?? '', nonEmptyRegex)) {
+                    return 'Username ni kiritng';
+                  }
+                  return null;
+                },
+                controller: usernameController,
+                hinText: "Username",
+                prefixIcon: Image(
+                  image: const AssetImage(
+                    "assets/icons/ic_user_filled.png",
+                  ),
+                  color: const Color(0xFFA4A3A4),
+                  width: 25.sp,
+                  height: 25.sp,
+                ),
+                textInputAction: TextInputAction.next,
+              ),
+              const Spacer(flex: 1),
+
+              /// #Second TextField
+              CustomRegistrationTextField(
+                isObscured: isObscured,
+                validator: (String? value) {
+                  if (passwordController.text.isEmpty) {
+                    return 'Parolni kiriting';
+                  }
+                  return null;
+                },
+                controller: passwordController,
+                hinText: "enter_password".tr(),
+                prefixIcon: Image(
+                  image: const AssetImage(
+                    "assets/icons/ic_lock_disabled.png",
+                  ),
                   width: 28.sp,
                   height: 28.sp,
                 ),
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    isObscured = !isObscured;
+                    setState(() {});
+                  },
+                  icon: Image(
+                    image: isObscured
+                        ? const AssetImage("assets/icons/ic_eye_off.png")
+                        : const AssetImage("assets/icons/ic_eye.png"),
+                    width: 28.sp,
+                    height: 28.sp,
+                  ),
+                ),
+                textInputAction: TextInputAction.done,
               ),
-              textInputAction: TextInputAction.done,
-            ),
-            const Spacer(flex: 3),
+              const Spacer(flex: 3),
 
-            /// #SubElevatedButton
-            CustomElevatedButton(
-              displayText: "next".tr(),
-              onPressed: login,
-            ),
+              /// #SubElevatedButton
+              CustomElevatedButton(
+                displayText: "next".tr(),
+                onPressed: () {
+                  login();
+                  formKey.currentState!.validate();
+                },
+              ),
 
-            const Spacer(flex: 2),
-          ],
+              const Spacer(flex: 2),
+            ],
+          ),
         ),
       ),
     );

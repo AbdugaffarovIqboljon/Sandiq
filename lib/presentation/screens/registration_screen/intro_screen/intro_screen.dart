@@ -13,7 +13,8 @@ class IntroScreen extends StatefulWidget {
 }
 
 class _IntroScreenState extends State<IntroScreen> {
-  bool isTapped = false;
+  bool uzTapped = true;
+  bool ruTapped = false;
 
   void navigateToLoginScreen() {
     Navigator.push(
@@ -77,16 +78,19 @@ class _IntroScreenState extends State<IntroScreen> {
                 const Spacer(),
                 TextButton(
                   style: TextButton.styleFrom(
-                    foregroundColor: isTapped == true
-                        ? const Color(0xFFC4BECD)
-                        : const Color(0xFF00827B),
+                    foregroundColor: uzTapped == true
+                        ? const Color(0xFF00827B)
+                        : const Color(0xFFC4BECD),
                   ),
                   onPressed: () {
-                    isTapped = !isTapped;
+                    uzTapped = !uzTapped;
+                    if (uzTapped) {
+                      ruTapped = false;
+                      setState(() {});
+                    }
                     context.setLocale(
                       const Locale('uz', 'UZ'),
                     );
-                    setState(() {});
                   },
                   child: Text(
                     'text_button_uzb'.tr(),
@@ -94,16 +98,19 @@ class _IntroScreenState extends State<IntroScreen> {
                 ),
                 TextButton(
                   style: TextButton.styleFrom(
-                    foregroundColor: isTapped == true
+                    foregroundColor: ruTapped == true
                         ? const Color(0xFF00827B)
                         : const Color(0xFFC4BECD),
                   ),
                   onPressed: () {
-                    isTapped = !isTapped;
+                    ruTapped = !ruTapped;
+                    if (ruTapped) {
+                      uzTapped = false;
+                      setState(() {});
+                    }
                     context.setLocale(
                       const Locale('ru', 'RU'),
                     );
-                    setState(() {});
                   },
                   child: Text(
                     'text_button_rus'.tr(),
