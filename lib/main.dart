@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:sandiq/presentation/screens/registration_screen/intro_screen/intro_screen.dart';
 import 'package:sandiq/services/user_service/token_manager.dart';
 
 import 'app.dart';
@@ -20,7 +21,7 @@ void main() async {
       ],
       path: "assets/languages",
       fallbackLocale: const Locale('uz', 'UZ'),
-      child: const MyApp(),
+      child: const IntroScreen(),
     ),
   );
 }

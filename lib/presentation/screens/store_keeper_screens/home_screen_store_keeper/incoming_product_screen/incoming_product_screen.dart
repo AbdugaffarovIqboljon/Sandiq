@@ -130,7 +130,9 @@ class _IncomingProductScreenContentState
                         final fetchedProduct = productList[index];
                         return DropdownMenu(
                           dropdownMenuEntries: [
-                            DropdownMenuEntry(value: Text(fetchedProduct.name), label: fetchedProduct.size)
+                            DropdownMenuEntry(
+                                value: Text(fetchedProduct.name),
+                                label: fetchedProduct.size)
                           ],
                         );
                       },
