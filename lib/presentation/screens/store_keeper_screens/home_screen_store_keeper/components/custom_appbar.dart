@@ -159,7 +159,6 @@ Future<User> fetchUserData() async {
       'https://e-work-backend-production.up.railway.app/auth/users/me',
       options: options,
     );
-
     return User.fromJson(response.data);
   } catch (e) {
     throw Exception('Failed to fetch user data $e');

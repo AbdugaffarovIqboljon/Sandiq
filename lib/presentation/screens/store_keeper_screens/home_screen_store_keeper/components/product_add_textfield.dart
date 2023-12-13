@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductAddTextField extends StatelessWidget {
   final String hinText;
+  final String? suffixText;
   final TextEditingController textEditingController;
   final TextInputAction textInputAction;
   final void Function(String)? onSubmitted;
@@ -12,6 +14,7 @@ class ProductAddTextField extends StatelessWidget {
     required this.textEditingController,
     this.onSubmitted,
     required this.textInputAction,
+    this.suffixText,
   });
 
   @override
@@ -23,6 +26,12 @@ class ProductAddTextField extends StatelessWidget {
       decoration: InputDecoration(
         isDense: true,
         hintText: hinText,
+        hintStyle: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 16.sp,
+          color: Colors.grey.shade700,
+        ),
+        suffixText: suffixText,
         filled: true,
         fillColor: Colors.blueGrey.shade50,
         border: const OutlineInputBorder(

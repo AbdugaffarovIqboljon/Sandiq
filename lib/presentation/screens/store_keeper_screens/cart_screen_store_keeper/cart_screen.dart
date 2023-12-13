@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:sandiq/services/constants/colors.dart';
-
-import '../../../../services/user_service/token_manager.dart';
+import 'package:sandiq/domain/model/product.dart';
+import 'package:sandiq/services/constants/colors.dart'; // Import your color constants
+import 'package:sandiq/services/user_service/token_manager.dart'; // Import TokenManager
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -13,6 +13,41 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  Dio dio = Dio();
+  List<Product> productList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    try {
+      String? token = await TokenManager.getToken();
+      if (token != null && token.isNotEmpty) {
+        Response response = await dio.get(
+          'https://e-work-backend-production.up.railway.app/products/sadmin/list',
+          options: Options(
+            headers: {
+              'accept': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+          ),
+        );
+
+        if (response.statusCode == 200) {
+          final List<dynamic> data = response.data as List<dynamic>;
+          setState(() {
+            productList = data.map((json) => Product.fromJson(json)).toList();
+          });
+        }
+      }
+    } catch (e) {
+      print('Failed to fetch data. Error: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,11 +109,12 @@ class _CartScreenState extends State<CartScreen> {
                     horizontal: 5,
                     vertical: 5,
                   ),
-                  itemCount: 16,
+                  itemCount: productList.length,
                   itemBuilder: (context, index) {
+                    final product = productList[index];
                     return ListTile(
                       title: Text(
-                        "${index + 1}. Qum",
+                        "${index + 1}. ${product.name}",
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.sp,
@@ -86,7 +122,7 @@ class _CartScreenState extends State<CartScreen> {
                         ),
                       ),
                       trailing: Text(
-                        "4998 tonna",
+                        "${product.amount} ${product.size}",
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 16.sp,
@@ -99,114 +135,6 @@ class _CartScreenState extends State<CartScreen> {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class ProductService {
-  final Dio _dio = Dio();
-
-  Future<List<Product>> fetchProducts() async {
-    String? token = await TokenManager.getToken();
-
-    if (token == null) {
-      throw Exception('Token is missing');
-    }
-
-    print('Token: $token');
-
-    try {
-      final response = await _dio.get(
-        'https://e-work-backend-production.up.railway.app/products/list',
-        options: Options(
-          headers: {
-            'accept': 'application/json',
-            'Authorization': 'Bearer $token',
-          },
-        ),
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> data = response.data ?? [];
-        return data.map((json) => Product.fromJson(json)).toList();
-      } else {
-        print('Failed to fetch products: ${response.statusCode}');
-        return [];
-      }
-    } catch (e) {
-      print('Error fetching products: $e');
-      return [];
-    }
-  }
-}
-
-class Product {
-  final int id;
-  final String name;
-  final int amount;
-  final String size;
-  final double? price;
-
-  Product({
-    required this.id,
-    required this.name,
-    required this.amount,
-    required this.size,
-    this.price,
-  });
-
-  factory Product.fromJson(Map<String, dynamic> json) {
-    return Product(
-      id: json['id'] ?? 0,
-      name: json['name'] ?? '',
-      amount: json['amount'] ?? 0,
-      size: json['size'] ?? '',
-      price: json['price'] != null ? json['price'].toDouble() : null,
-    );
-  }
-}
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  final ProductService productService = ProductService();
-
-  MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Product List'),
-        ),
-        body: FutureBuilder<List<Product>>(
-          future: productService.fetchProducts(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator.adaptive());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(child: Text('No products available'));
-            } else {
-              return ListView.builder(
-                itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) {
-                  final product = snapshot.data![index];
-                  return ListTile(
-                    title: Text(product.name),
-                    subtitle: Text('Amount: ${product.amount}'),
-                    trailing: Text('Size: ${product.size}'),
-                  );
-                },
-              );
-            }
-          },
         ),
       ),
     );

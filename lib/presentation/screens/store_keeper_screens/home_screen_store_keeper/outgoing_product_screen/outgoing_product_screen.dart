@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:sandiq/domain/model/product.dart';
 import 'package:sandiq/presentation/screens/store_keeper_screens/home_screen_store_keeper/components/product_add_button.dart';
 
 import '../components/animation_builder_incoming_product_screen.dart';
@@ -29,6 +30,7 @@ class _OutGoingProductScreenContentState
 
   List<Widget> savedProductsWidgets = [];
   late Widget productWidget;
+  ProductService productService = ProductService();
 
   @override
   void initState() {
@@ -87,6 +89,7 @@ class _OutGoingProductScreenContentState
                   textEditingProductController: textEditingProductController,
                   textEditingProductAmountController:
                       textEditingProductAmountController,
+                  productService: productService,
                 )
               : Column(
                   children: [

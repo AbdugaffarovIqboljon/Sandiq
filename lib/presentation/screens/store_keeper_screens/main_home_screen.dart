@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:sandiq/domain/model/product.dart';
 import 'package:sandiq/domain/model/user_model.dart';
 
 import 'cart_screen_store_keeper/cart_screen.dart';
@@ -9,6 +10,7 @@ import 'home_screen_store_keeper/components/custom_appbar.dart';
 import 'home_screen_store_keeper/components/custom_bottom_navbar.dart';
 import 'home_screen_store_keeper/components/dialog_delete_account.dart';
 import 'home_screen_store_keeper/home_screen_store_keeper.dart';
+import 'home_screen_store_keeper/incoming_product_screen/incoming_product_screen.dart';
 import 'manage_screen_store_keeper/manage_screen.dart';
 
 class MainHomeScreenStoreKeeper extends StatefulWidget {
@@ -25,6 +27,7 @@ class _MainHomeScreenStoreKeeperState extends State<MainHomeScreenStoreKeeper>
   late TabController tabController;
   bool isMenuTapped = false;
   late Future<User> _userFuture;
+  ProductService productService = ProductService();
 
   void toggleMenu(bool value) {
     setState(() {
