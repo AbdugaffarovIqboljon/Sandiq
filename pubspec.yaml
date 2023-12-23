@@ -25,9 +25,17 @@ dependencies:
 
   #easy_localization
   easy_localization: ^3.0.3
+
+  #sqflite
   sqflite: ^2.3.0
+
+  #path_for_sqflite
   path: ^1.8.3
+
+  #flutter_typeahead
   flutter_typeahead: ^5.0.1
+  dropdown_button2: ^2.3.9
+
 
 
 dev_dependencies:

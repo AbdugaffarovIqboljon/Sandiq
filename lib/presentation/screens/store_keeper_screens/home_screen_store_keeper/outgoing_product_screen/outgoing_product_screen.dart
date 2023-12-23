@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:sandiq/domain/model/product.dart';
+import 'package:sandiq/domain/model/product_model.dart';
 import 'package:sandiq/presentation/screens/store_keeper_screens/home_screen_store_keeper/components/product_add_button.dart';
 
 import '../components/animation_builder_incoming_product_screen.dart';
+import '../incoming_product_screen/incoming_product_screen.dart';
 
 class OutGoingProductScreenContent extends StatefulWidget {
   const OutGoingProductScreenContent({Key? key}) : super(key: key);
@@ -52,6 +53,22 @@ class _OutGoingProductScreenContentState
   void dispose() {
     _animationController.dispose();
     super.dispose();
+  }
+
+  Future<void> postData() async {
+    try {
+      await productService.postOutGoingProduct(
+        productId: selectedProductId,
+        amount: int.tryParse(textEditingProductAmountController.text) ?? 1,
+        description: "OutGoing Product =>",
+        deliveryName: textEditingNameController.text,
+        deliveryPhone: textEditingPhoneController.text,
+        status: false,
+      );
+    } catch (e, l) {
+      print('Error fetching data: $e');
+      print('Location of fetching data: $l');
+    }
   }
 
   void _toggleVisibility() {
@@ -115,31 +132,15 @@ class _OutGoingProductScreenContentState
           SizedBox(height: _toggleTextFields ? 5 : 30.sp),
           MyProductAddButton(
             onPressed: () {
-              // if (_isTextFieldFilled()) {
-              //   productWidget = ProductExpansionTile(
-              //     textEditingProductController: textEditingProductController,
-              //     textEditingProductAmountController:
-              //         textEditingProductAmountController,
-              //     textEditingNameController: textEditingNameController,
-              //     textEditingPhoneController: textEditingPhoneController,
-              //   );
-              //
-              //   savedProductsWidgets.add(productWidget);
-              //   isSaved = !isSaved;
-              // }
-
               _toggleVisibility();
+              postData();
               isButtonTapped = !isButtonTapped;
-              setState(() {});
 
-              // if (isSaved == false) {
-              textEditingNameController.clear();
-              textEditingPhoneController.clear();
               textEditingProductController.clear();
               textEditingProductAmountController.clear();
-              // } else {
-              //   return;
-              // }
+              textEditingNameController.clear();
+              textEditingPhoneController.clear();
+              setState(() {});
             },
             buttonText: isButtonTapped ? "Saqlash" : "Maxsulot qo'shish +",
           ),

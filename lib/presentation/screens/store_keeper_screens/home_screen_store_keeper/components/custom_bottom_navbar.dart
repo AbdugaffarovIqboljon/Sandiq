@@ -59,15 +59,15 @@ class BottomNavBar extends StatelessWidget {
               ],
             ),
           ),
-          Tab(
-            icon: Column(
-              children: [
-                Icon(CupertinoIcons.arrow_up_arrow_down, size: 20.sp),
-                const SizedBox(height: 2),
-                const Text("Manage"),
-              ],
-            ),
-          ),
+          // Tab(
+          //   icon: Column(
+          //     children: [
+          //       Icon(CupertinoIcons.arrow_up_arrow_down, size: 20.sp),
+          //       const SizedBox(height: 2),
+          //       const Text("Manage"),
+          //     ],
+          //   ),
+          // ),
           Tab(
             icon: Column(
               children: [

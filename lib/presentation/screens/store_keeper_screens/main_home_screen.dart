@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:sandiq/domain/model/product.dart';
+import 'package:sandiq/domain/model/product_model.dart';
 import 'package:sandiq/domain/model/user_model.dart';
 
 import 'cart_screen_store_keeper/cart_screen.dart';
@@ -10,8 +10,6 @@ import 'home_screen_store_keeper/components/custom_appbar.dart';
 import 'home_screen_store_keeper/components/custom_bottom_navbar.dart';
 import 'home_screen_store_keeper/components/dialog_delete_account.dart';
 import 'home_screen_store_keeper/home_screen_store_keeper.dart';
-import 'home_screen_store_keeper/incoming_product_screen/incoming_product_screen.dart';
-import 'manage_screen_store_keeper/manage_screen.dart';
 
 class MainHomeScreenStoreKeeper extends StatefulWidget {
   const MainHomeScreenStoreKeeper({super.key});
@@ -25,7 +23,7 @@ class _MainHomeScreenStoreKeeperState extends State<MainHomeScreenStoreKeeper>
     with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late TabController tabController;
-  bool isMenuTapped = false;
+  bool isMenuTapped = true;
   late Future<User> _userFuture;
   ProductService productService = ProductService();
 
@@ -34,14 +32,14 @@ class _MainHomeScreenStoreKeeperState extends State<MainHomeScreenStoreKeeper>
       isMenuTapped = value;
     });
     if (isMenuTapped) {
-      _scaffoldKey.currentState?.openDrawer(); // Open drawer
+      _scaffoldKey.currentState?.openDrawer();
     }
   }
 
   @override
   void initState() {
     _userFuture = fetchUserData();
-    tabController = TabController(length: 4, vsync: this);
+    tabController = TabController(length: 3, vsync: this);
     super.initState();
   }
 
@@ -88,7 +86,6 @@ class _MainHomeScreenStoreKeeperState extends State<MainHomeScreenStoreKeeper>
         children: const [
           HomeScreenStoreKeeper(),
           CartScreen(),
-          ManageScreenStoreKeeper(),
           HistoryScreen(),
         ],
       ),

@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:sandiq/domain/model/product.dart';
-import 'package:sandiq/services/constants/colors.dart'; // Import your color constants
-import 'package:sandiq/services/user_service/token_manager.dart'; // Import TokenManager
+import 'package:sandiq/domain/model/product_model.dart';
+import 'package:sandiq/services/constants/colors.dart';
+import 'package:sandiq/services/user_service/token_manager.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -35,8 +35,8 @@ class _CartScreenState extends State<CartScreen> {
             },
           ),
         );
-
-        if (response.statusCode == 200) {
+        print("DATA : ${response.data}");
+        if (response.statusCode == 200 || response.statusCode == 201) {
           final List<dynamic> data = response.data as List<dynamic>;
           setState(() {
             productList = data.map((json) => Product.fromJson(json)).toList();
@@ -122,7 +122,7 @@ class _CartScreenState extends State<CartScreen> {
                         ),
                       ),
                       trailing: Text(
-                        "${product.amount} ${product.size}",
+                        "${product.amount} ${product.size} ${product.amount}",
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 16.sp,

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:sandiq/presentation/screens/store_keeper_screens/home_screen_store_keeper/components/button_animation.dart';
 import 'package:sandiq/services/constants/colors.dart';
-
 import 'incoming_product_screen/incoming_product_screen.dart';
 import 'outgoing_product_screen/outgoing_product_screen.dart';
 

@@ -21,8 +21,7 @@ class _ButtonAnimationState extends State<ButtonAnimation> {
           children: [
             Align(
               alignment: Alignment(
-                widget.selectedIconIndex.value == 1 ? 0.97 : -0.97,
-                0,
+                  widget.selectedIconIndex.value == 1 ? 0.97 : -0.97, 0,
               ),
               child: Container(
                 width: 180.sp,
@@ -44,16 +43,16 @@ class _ButtonAnimationState extends State<ButtonAnimation> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 0.0),
+              padding: EdgeInsets.symmetric(vertical: 5.sp),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  IconButton(
-                    onPressed: () {
+                  GestureDetector(
+                    onTap: () {
                       widget.selectedIconIndex.value = 0;
                       setState(() {});
                     },
-                    icon: Image(
+                    child: Image(
                       image: const AssetImage(
                         "assets/images/img_incoming_parcel.png",
                       ),
@@ -61,12 +60,12 @@ class _ButtonAnimationState extends State<ButtonAnimation> {
                       width: 34.sp,
                     ),
                   ),
-                  IconButton(
-                    onPressed: () {
+                  GestureDetector(
+                    onTap: () {
                       widget.selectedIconIndex.value = 1;
                       setState(() {});
                     },
-                    icon: Image(
+                    child: Image(
                       image: const AssetImage(
                         "assets/images/img_delivery_truck.png",
                       ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sandiq/domain/model/product.dart';
+import 'package:sandiq/domain/model/product_model.dart';
 import 'package:sandiq/presentation/screens/store_keeper_screens/home_screen_store_keeper/components/product_add_textfield.dart';
 
 import '../incoming_product_screen/incoming_product_screen.dart';
@@ -14,7 +14,7 @@ class MyAnimationBuilder extends StatefulWidget {
   final TextEditingController textEditingProductAmountController;
   final ProductService productService;
 
-  const MyAnimationBuilder({
+  MyAnimationBuilder({
     super.key,
     required AnimationController animationController,
     required bool toggleTextFields,
@@ -42,11 +42,6 @@ class _MyAnimationBuilderState extends State<MyAnimationBuilder> {
   }
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: widget._animationController,
@@ -69,18 +64,6 @@ class _MyAnimationBuilderState extends State<MyAnimationBuilder> {
                 child: Column(
                   children: [
                     const SizedBox(height: 20),
-                    ProductAddTextField(
-                      hinText: "Ismi",
-                      textEditingController: widget.textEditingNameController,
-                      textInputAction: TextInputAction.next,
-                    ),
-                    const SizedBox(height: 20),
-                    ProductAddTextField(
-                      hinText: "Telefon Raqami",
-                      textEditingController: widget.textEditingPhoneController,
-                      textInputAction: TextInputAction.next,
-                    ),
-                    const SizedBox(height: 20),
                     ProductTypeSelector(
                       productService: widget.productService,
                       textEditingController:
@@ -95,6 +78,18 @@ class _MyAnimationBuilderState extends State<MyAnimationBuilder> {
                       textInputAction: TextInputAction.done,
                       suffixText:
                           selectedProduct != null ? selectedProduct?.size : '',
+                    ),
+                    const SizedBox(height: 20),
+                    ProductAddTextField(
+                      hinText: "Ismi",
+                      textEditingController: widget.textEditingNameController,
+                      textInputAction: TextInputAction.next,
+                    ),
+                    const SizedBox(height: 20),
+                    ProductAddTextField(
+                      hinText: "Telefon Raqami",
+                      textEditingController: widget.textEditingPhoneController,
+                      textInputAction: TextInputAction.next,
                     ),
                     const SizedBox(height: 20),
                   ],
