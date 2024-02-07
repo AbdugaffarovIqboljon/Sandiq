@@ -3,17 +3,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:sandiq/presentation/screens/registration_screen/login_page/login_page.dart';
-import 'package:sandiq/presentation/screens/store_keeper_screens/main_home_screen.dart';
 import 'package:sandiq/services/user_service/token_manager.dart';
-
-import '../../manager_role_screen/home_screen_manager_role/home_screen_manager_role.dart';
 import '../components/custom_elevated_button.dart';
 import '../components/custom_textfield.dart';
 
 class UpdateScreen extends StatefulWidget {
   const UpdateScreen({Key? key}) : super(key: key);
-
-  static const route = '/update';
 
   @override
   State<UpdateScreen> createState() => _UpdateScreenState();
@@ -24,10 +19,9 @@ class _UpdateScreenState extends State<UpdateScreen> {
   late TextEditingController fullNameController;
   late TextEditingController passwordController;
   late TextEditingController phoneController;
-  final formKey = GlobalKey<FormState>();
   bool isObscured = true;
 
-  late String savedToken;
+  String? savedToken;
   Map<String, dynamic> jsonData = {};
 
   @override
@@ -42,32 +36,18 @@ class _UpdateScreenState extends State<UpdateScreen> {
   }
 
   Future<void> getToken() async {
-    final token =
-        await TokenManager.getToken(); // Retrieve the token from TokenManager
-    setState(() {
-      savedToken = token ?? "null";
-    });
+    final token = await TokenManager.getToken();
+    if (token != null) {
+      setState(() {
+        savedToken = token;
+      });
+    } else {
+      TokenManager.saveToken(jsonData["token"]);
+    }
   }
 
   Dio dio = Dio();
 
-  void navigateToManagerHomeScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const HomeScreenManagerRole(),
-      ),
-    );
-  }
-
-  void navigateToMainHomeScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const MainHomeScreenStoreKeeper(),
-      ),
-    );
-  }
 
   Future<void> updateUserInformation() async {
     Map<String, Object?> requestData = {
@@ -79,7 +59,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
 
     Options options = Options(
       headers: {
-        'Authorization': 'Bearer $savedToken', // Use the saved token here
+        'Authorization': 'Bearer $savedToken',
         'Content-Type': 'application/json',
         'accept': 'application/json',
       },
@@ -93,8 +73,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        setState(() {});
-        navigateToLoginScreen();
+        print("RESPONSE: ${response.data}");
       }
     } catch (e) {
       // ignore: use_build_context_synchronously
@@ -147,6 +126,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
   }
 
   RegExp phoneNumberRegex = RegExp(r'^\+998[0-9]{9}$');
+
   bool regexChecker(String text, RegExp regex) {
     return !regex.hasMatch(text);
   }
@@ -281,6 +261,8 @@ class _UpdateScreenState extends State<UpdateScreen> {
                     fetchUserData();
                     if (jsonData.isNotEmpty) {
                       updateUserInformation();
+                      navigateToLoginScreen();
+                      setState(() {});
                     } else {
                       debugPrint('jsonData is not available');
                     }

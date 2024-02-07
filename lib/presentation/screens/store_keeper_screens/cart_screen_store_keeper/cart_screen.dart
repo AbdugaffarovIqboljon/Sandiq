@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:sandiq/domain/model/product_model.dart';
 import 'package:sandiq/services/constants/colors.dart';
-import 'package:sandiq/services/user_service/token_manager.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -15,36 +14,22 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   Dio dio = Dio();
   List<Product> productList = [];
+  ProductService productService = ProductService();
 
   @override
   void initState() {
+    fetchUserCartProducts();
     super.initState();
-    fetchData();
   }
 
-  Future<void> fetchData() async {
+  Future<void> fetchUserCartProducts() async {
     try {
-      String? token = await TokenManager.getToken();
-      if (token != null && token.isNotEmpty) {
-        Response response = await dio.get(
-          'https://e-work-backend-production.up.railway.app/products/sadmin/list',
-          options: Options(
-            headers: {
-              'accept': 'application/json',
-              'Authorization': 'Bearer $token',
-            },
-          ),
-        );
-        print("DATA : ${response.data}");
-        if (response.statusCode == 200 || response.statusCode == 201) {
-          final List<dynamic> data = response.data as List<dynamic>;
-          setState(() {
-            productList = data.map((json) => Product.fromJson(json)).toList();
-          });
-        }
-      }
+      List<Product> incomingProducts = await productService.fetchUserCart();
+      setState(() {
+        productList = incomingProducts;
+      });
     } catch (e) {
-      print('Failed to fetch data. Error: $e');
+      print('Error fetching incoming products: $e');
     }
   }
 
@@ -56,6 +41,7 @@ class _CartScreenState extends State<CartScreen> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
           primary: false,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,7 +108,7 @@ class _CartScreenState extends State<CartScreen> {
                         ),
                       ),
                       trailing: Text(
-                        "${product.amount} ${product.size} ${product.amount}",
+                        "${product.amount} ${product.size}",
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 16.sp,

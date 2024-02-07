@@ -1,11 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:sandiq/services/constants/colors.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:sandiq/domain/model/product_model.dart';
+import 'package:sandiq/presentation/screens/manager_role_screen/components/add_screen_button.dart';
+import 'package:sandiq/presentation/screens/store_keeper_screens/home_screen_store_keeper/components/product_type_selector.dart';
+
 import 'my_text_field_add.dart';
 
-// ignore: must_be_immutable
+List<Product> savedProducts = [];
+List<int> amounts = [];
+int amountControlling = 0;
+
 class MyDialog extends StatefulWidget {
-  const MyDialog({super.key});
+  final VoidCallback onProductAdded;
+
+  const MyDialog({super.key, required this.onProductAdded});
 
   @override
   State<MyDialog> createState() => _MyDialogState();
@@ -14,22 +23,32 @@ class MyDialog extends StatefulWidget {
 class _MyDialogState extends State<MyDialog> {
   TextEditingController productController = TextEditingController();
   TextEditingController amountController = TextEditingController();
+  ProductService productService = ProductService();
+
+  Product? selectedProduct;
+
+  void updateSelectedProduct(Product product) {
+    setState(() {
+      selectedProduct = product;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: CustomColors.kWhite,
+      elevation: 0,
+      backgroundColor: Colors.white,
       content: SizedBox(
-        height: 300,
-        width: double.infinity,
+        height: 350.sp,
+        width: 300.sp,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 const Text(
-                  'Mahsulot qo\'shish',
+                  "Maxsulot qo'shish",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 22,
@@ -43,41 +62,31 @@ class _MyDialogState extends State<MyDialog> {
                 ),
               ],
             ),
-            MyTextFieldAdd(
-              text: 'Mahsulotni tanlang',
-              controller: productController,
-              action: TextInputAction.next,
+            ProductTypeSelector(
+              productService: productService,
+              textEditingController: productController,
+              onSelected: updateSelectedProduct,
             ),
             MyTextFieldAdd(
-              text: 'Miqdorni kiriting',
+              hinText: 'Miqdorni kiriting',
               controller: amountController,
-              icon: Icons.abc,
+              suffixText: selectedProduct != null ? selectedProduct?.size : '',
               action: TextInputAction.done,
             ),
-            InkWell(
-              onTap: () {
-                setState(() {});
+            AddScreenManagerButton(
+              fontSize: 15.sp,
+              width: 300.sp,
+              displayText: "Qo'shish +",
+              onPressed: () {
+                if (selectedProduct != null) {
+                  int enteredAmount = int.tryParse(amountController.text) ?? 0;
+                  savedProducts.add(selectedProduct!);
+                  amounts.add(enteredAmount);
+                  widget.onProductAdded(); // Notify the parent widget
+                  setState(() {});
+                  Navigator.pop(context);
+                }
               },
-              child: Container(
-                width: double.infinity,
-                height: 60,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: productController.text.isNotEmpty &&
-                          amountController.text.isNotEmpty
-                      ? CustomColors.kPrimaryColor
-                      : CustomColors.kPrimaryColor.withOpacity(.3),
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  'Qo\'shish +',
-                  style: TextStyle(
-                    color: CustomColors.kWhite,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: .5,
-                  ),
-                ),
-              ),
             ),
           ],
         ),

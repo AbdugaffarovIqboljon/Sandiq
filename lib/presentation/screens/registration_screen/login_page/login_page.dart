@@ -47,7 +47,6 @@ class _LoginScreenState extends State<LoginScreen> {
         final receivedToken = response.data["token"];
         await TokenManager.saveToken(receivedToken);
 
-        setState(() {});
         debugPrint('RECEIVED TOKEN ======> $receivedToken');
 
         if (receivedData["status"] == false) {
@@ -55,20 +54,25 @@ class _LoginScreenState extends State<LoginScreen> {
         }
         if (receivedData["status"] == true &&
             receivedData["role"] == "s_admin") {
+          print("Hello STORE KEEPER");
           navigateToMainHomeScreenStoreKeeper();
         }
-        if (receivedToken["status"] == true &&
+        if (receivedData["status"] == true &&
             receivedData["role"] == "Prorap") {
+          print("Hello MANAGER");
           navigateToManagerHomeScreen();
         }
+
+        setState(() {});
       }
-    } catch (e) {
+    } catch (e, l) {
       debugPrint('================= $e =================');
+      debugPrint('LOCATION \n================= $l =================');
     }
   }
 
   void navigateToUpdateScreen() {
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => const UpdateScreen(),
@@ -77,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void navigateToManagerHomeScreen() {
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => const MainHomeScreenManagerRole(),
@@ -86,18 +90,14 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void navigateToMainHomeScreenStoreKeeper() {
-    Navigator.pushAndRemoveUntil(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => const MainHomeScreenStoreKeeper(),
       ),
-      (route) => false,
     );
   }
 
-  // RegExp passwordRegex = RegExp(
-  //   r'^(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$',
-  // );
   RegExp nonEmptyRegex = RegExp(r'^(?!\s*$).+');
 
   bool regexChecker(String password, RegExp regExp) {
@@ -144,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 isObscured: false,
                 validator: (value) {
                   if (regexChecker(value ?? '', nonEmptyRegex)) {
-                    return 'Username ni kiritng';
+                    return 'Usernameni kiriting';
                   }
                   return null;
                 },
@@ -202,7 +202,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 displayText: "next".tr(),
                 onPressed: () {
                   login();
-                  formKey.currentState!.validate();
                 },
               ),
 

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-// ignore: must_be_immutable
 class MyCard extends StatelessWidget {
-  String product;
-  String price;
-  String volume;
-  String totalPrice;
+  final String product;
+  final String price;
+  final String volume;
+  final String totalPrice;
 
-  MyCard({
+  const MyCard({
     super.key,
     required this.price,
     required this.product,
@@ -18,7 +18,7 @@ class MyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       margin: const EdgeInsets.only(top: 10),
       width: double.infinity,
       decoration: BoxDecoration(
@@ -27,10 +27,11 @@ class MyCard extends StatelessWidget {
       ),
       child: RichText(
         text: TextSpan(
-          style: const TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
+          style: TextStyle(
+            height: 1.5,
+            color: Colors.black87,
+            fontWeight: FontWeight.w600,
+            fontSize: 17.5.sp,
           ),
           children: [
             const TextSpan(text: 'Mahsulot nomi: '),
@@ -40,7 +41,7 @@ class MyCard extends StatelessWidget {
                 fontWeight: FontWeight.w400,
               ),
             ),
-            const TextSpan(text: '\n1kg: '),
+            const TextSpan(text: '\n1 kg: '),
             TextSpan(
               text: price,
               style: const TextStyle(

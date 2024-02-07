@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:sandiq/services/constants/colors.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MyTextFieldAdd extends StatelessWidget {
-  final String text;
-  final IconData? icon;
+  final String? suffixText;
+  final String? hinText;
   final TextInputAction action;
   final TextEditingController controller;
 
   const MyTextFieldAdd({
     super.key,
-    this.icon,
     required this.action,
-    required this.text,
     required this.controller,
+    this.suffixText,
+    this.hinText,
   });
 
   @override
@@ -21,22 +21,33 @@ class MyTextFieldAdd extends StatelessWidget {
       textInputAction: TextInputAction.next,
       controller: controller,
       decoration: InputDecoration(
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+        isDense: true,
+        alignLabelWithHint: false,
+        labelStyle: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 16.sp,
+          color: Colors.grey.shade700,
         ),
-        hintText: text,
         hintStyle: TextStyle(
-          color: Colors.grey.shade500,
+          fontWeight: FontWeight.w600,
+          fontSize: 16.sp,
+          color: Colors.grey.shade700,
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: CustomColors.kBlack),
+        suffixText: suffixText,
+        hintText: hinText,
+        filled: true,
+        fillColor: Colors.blueGrey.shade50,
+        border: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(20),
+          ),
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.grey.shade500),
+        enabledBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(20),
+          ),
+          borderSide: BorderSide.none,
         ),
-        suffixIcon: Icon(icon),
       ),
     );
   }

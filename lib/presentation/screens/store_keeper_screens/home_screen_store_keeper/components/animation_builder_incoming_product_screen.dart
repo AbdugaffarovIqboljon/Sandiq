@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sandiq/domain/model/product_model.dart';
 import 'package:sandiq/presentation/screens/store_keeper_screens/home_screen_store_keeper/components/product_add_textfield.dart';
-
-import '../incoming_product_screen/incoming_product_screen.dart';
+import 'package:sandiq/presentation/screens/store_keeper_screens/home_screen_store_keeper/components/product_type_selector.dart';
 
 class MyAnimationBuilder extends StatefulWidget {
   final AnimationController _animationController;
@@ -14,7 +13,7 @@ class MyAnimationBuilder extends StatefulWidget {
   final TextEditingController textEditingProductAmountController;
   final ProductService productService;
 
-  MyAnimationBuilder({
+  const MyAnimationBuilder({
     super.key,
     required AnimationController animationController,
     required bool toggleTextFields,
@@ -73,11 +72,9 @@ class _MyAnimationBuilderState extends State<MyAnimationBuilder> {
                     const SizedBox(height: 20),
                     ProductAddTextField(
                       hinText: 'Miqdorni kiriting',
-                      textEditingController:
-                          widget.textEditingProductAmountController,
+                      textEditingController: widget.textEditingProductAmountController,
                       textInputAction: TextInputAction.done,
-                      suffixText:
-                          selectedProduct != null ? selectedProduct?.size : '',
+                      suffixText: selectedProduct != null ? selectedProduct?.size : '',
                     ),
                     const SizedBox(height: 20),
                     ProductAddTextField(
@@ -87,7 +84,8 @@ class _MyAnimationBuilderState extends State<MyAnimationBuilder> {
                     ),
                     const SizedBox(height: 20),
                     ProductAddTextField(
-                      hinText: "Telefon Raqami",
+                      prefixText: "(+998)",
+                      labelText: "Telefon raqami",
                       textEditingController: widget.textEditingPhoneController,
                       textInputAction: TextInputAction.next,
                     ),

@@ -1,3 +1,6 @@
+import 'package:dio/dio.dart';
+import 'package:sandiq/services/user_service/token_manager.dart';
+
 class User {
   final int id;
   final String name;
@@ -95,5 +98,29 @@ class Worker {
       username: json['username'] ?? '',
       phone: json['phone'] ?? '',
     );
+  }
+}
+
+class UserService {
+  final Dio _dio = Dio();
+
+  /// #Fetch UserData with Token
+  Future<User> fetchUserData() async {
+    String? token = await TokenManager.getToken();
+    Options options = Options(
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    try {
+      Response response = await _dio.get(
+        'https://e-work-backend-production.up.railway.app/auth/users/me',
+        options: options,
+      );
+      return User.fromJson(response.data);
+    } catch (e) {
+      throw Exception('Failed to fetch user data $e');
+    }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lottie/lottie.dart';
 import 'package:sandiq/presentation/screens/registration_screen/intro_screen/intro_screen.dart';
 import 'package:sandiq/services/user_service/token_manager.dart';
 
@@ -18,20 +19,17 @@ Future buildShowDialogDeleteAccount(BuildContext context, String name) {
     useSafeArea: true,
     builder: (context) {
       return AlertDialog(
+        backgroundColor: Colors.white,
         clipBehavior: Clip.antiAlias,
         title: Column(
           children: [
-            Image(
-              image: const AssetImage("assets/icons/logout.png"),
-              height: 80.sp,
-              width: 80.sp,
-            ),
+            Lottie.asset("assets/lottie/animation_log_out.json", width: 180, height: 180),
             SizedBox(height: 30.sp),
             Text(
-              "Haqiqatdan ham tizimdan chiqishni xohlaysizmi?",
+              "Tizimdan chiqishni xohlaysizmi?",
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 21.sp,
+                fontSize: 20.sp,
                 fontWeight: FontWeight.w500,
               ),
             ),

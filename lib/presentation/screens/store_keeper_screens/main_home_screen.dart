@@ -25,6 +25,7 @@ class _MainHomeScreenStoreKeeperState extends State<MainHomeScreenStoreKeeper>
   late TabController tabController;
   bool isMenuTapped = true;
   late Future<User> _userFuture;
+  UserService userService = UserService();
   ProductService productService = ProductService();
 
   void toggleMenu(bool value) {
@@ -38,7 +39,7 @@ class _MainHomeScreenStoreKeeperState extends State<MainHomeScreenStoreKeeper>
 
   @override
   void initState() {
-    _userFuture = fetchUserData();
+    _userFuture = userService.fetchUserData();
     tabController = TabController(length: 3, vsync: this);
     super.initState();
   }
@@ -63,7 +64,8 @@ class _MainHomeScreenStoreKeeperState extends State<MainHomeScreenStoreKeeper>
                     user?.name ?? "Unknown",
                     user?.phone ?? "Unknown",
                     () {
-                      buildShowDialogDeleteAccount(context, user?.name ?? "Unknown");
+                      buildShowDialogDeleteAccount(
+                          context, user?.name ?? "Unknown");
                     },
                   );
                 }
@@ -77,9 +79,7 @@ class _MainHomeScreenStoreKeeperState extends State<MainHomeScreenStoreKeeper>
           onMenuTapped: toggleMenu,
         ),
       ),
-      bottomNavigationBar: BottomNavBar(
-        controller: tabController,
-      ),
+      bottomNavigationBar: BottomNavBar(controller: tabController),
       extendBody: true,
       body: TabBarView(
         controller: tabController,

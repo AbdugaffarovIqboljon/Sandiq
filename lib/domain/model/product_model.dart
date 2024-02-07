@@ -1,7 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:sandiq/domain/model/product_delivery.dart';
 import 'package:sandiq/domain/model/product_history_model.dart';
+import 'package:sandiq/domain/model/raw_materials_model.dart';
 import 'package:sandiq/services/user_service/token_manager.dart';
+
+import 'history_model.dart';
 
 class Product {
   late int id;
@@ -228,7 +231,7 @@ class ProductService {
 
     try {
       final response = await _dio.get(
-        'https://e-work-backend-production.up.railway.app/products/get/product/delivery',
+        'https://e-work-backend-production.up.railway.app/products/get/incoming-products',
         options: Options(
           headers: {
             'accept': 'application/json',
@@ -249,6 +252,161 @@ class ProductService {
       return [];
     }
   }
+
+  /// #Fetch OutGoing Products
+
+  Future<List<DeliveredProduct>> fetchOutGoingProducts() async {
+    String? token = await TokenManager.getToken();
+
+    if (token == null) {
+      throw Exception('Token is missing');
+    }
+
+    try {
+      final response = await _dio.get(
+        'https://e-work-backend-production.up.railway.app/products/get/outgoing-products',
+        options: Options(
+          headers: {
+            'accept': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final List<dynamic> data = response.data ?? [];
+        return data.map((json) => DeliveredProduct.fromJson(json)).toList();
+      } else {
+        print('Failed to fetch incoming products: ${response.statusCode}');
+        return [];
+      }
+    } catch (e) {
+      print('Error fetching incoming products: $e');
+      return [];
+    }
+  }
+
+  /// #Fetch UserCart
+
+  Future<List<Product>> fetchUserCart() async {
+    String? token = await TokenManager.getToken();
+    if (token == null) {
+      throw Exception('Token is missing');
+    }
+    try {
+      Response response = await _dio.get(
+        'https://e-work-backend-production.up.railway.app/products/sadmin/list',
+        options: Options(
+          headers: {
+            'accept': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final List<dynamic> data = response.data ?? [];
+        return data.map((json) => Product.fromJson(json)).toList();
+      } else {
+        print('Failed to fetch incoming products: ${response.statusCode}');
+        return [];
+      }
+    } catch (e) {
+      print('Error fetching incoming products: $e');
+      return [];
+    }
+  }
+
+  /// #Fetch Histroy Manager Role
+
+  Future<List<History>> fetchHistoryData() async {
+    String? token = await TokenManager.getToken();
+
+    if (token == null) {
+      throw Exception('Token is missing');
+    }
+
+    try {
+      final response = await _dio.get(
+        'https://e-work-backend-production.up.railway.app/bid/object/history',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'accept': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final List<dynamic> data = response.data ?? [];
+        return data.map((json) => History.fromJson(json)).toList();
+      } else {
+        print('Failed to fetch history data: ${response.statusCode}');
+        return [];
+      }
+    } catch (e) {
+      print('Error fetching history data: $e');
+      return [];
+    }
+  }
+
+  /// #Fetch Home Data Manager Role
+  Future<RawMaterials?> fetchHomeDataManagerRole(int id) async {
+    String? token = await TokenManager.getToken();
+    try {
+      Response response = await _dio.get(
+        'https://e-work-backend-production.up.railway.app/products/set/list/$id',
+        options: Options(
+          headers: {
+            'accept': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      return RawMaterials.fromJson(response.data);
+    } catch (e, l) {
+      print('Error: $e');
+      print('Location: $l');
+      return null;
+    }
+  }
+
+
+  /// #Post Product in Add Screen Manager
+  Future<bool> postDataToBackend(Map<String, Object?> requestBody) async {
+    try {
+      String? token = await TokenManager.getToken();
+
+      if (token == null || token.isEmpty) {
+        throw Exception('Token is missing');
+      }
+
+      Response response = await _dio.post(
+        'https://e-work-backend-production.up.railway.app/bid/object/create',
+        options: Options(
+          headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+        ),
+        data: requestBody,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('Data posted successfully');
+        return true; // Indicate success
+      } else {
+        print('Failed to post data. Status code: ${response.statusCode}');
+        return false; // Indicate failure
+      }
+    } catch (error) {
+      print('Error: $error');
+      return false; // Indicate failure
+    }
+  }
+
 }
 
 final jsonExample = {

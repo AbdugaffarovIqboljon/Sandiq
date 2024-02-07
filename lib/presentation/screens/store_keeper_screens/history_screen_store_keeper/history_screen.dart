@@ -24,6 +24,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
+      extendBodyBehindAppBar: true,
       extendBody: true,
       backgroundColor: CustomColors.kWhite,
       body: Padding(
@@ -46,66 +48,66 @@ class _HistoryScreenState extends State<HistoryScreen> {
             } else {
               List<ProductHistory> productHistory = snapshot.data ?? [];
               productHistory = productHistory.reversed.toList();
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 50.h),
-                  Text(
-                    "Maxsulotlar tarixi",
-                    style: TextStyle(
-                      fontSize: 19.sp,
-                      color: Colors.grey.shade900,
-                      fontWeight: FontWeight.w600,
+              return SingleChildScrollView(
+                physics: const NeverScrollableScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 50.h),
+                    Text(
+                      "Maxsulotlar tarixi",
+                      style: TextStyle(
+                        fontSize: 19.sp,
+                        color: Colors.grey.shade900,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  TextField(
-                    decoration: InputDecoration(
-                      isDense: true,
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(15),
-                        ),
-                        borderSide: BorderSide(
-                          color: Colors.grey.shade200,
-                          width: 2,
-                        ),
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(15),
-                        ),
-                        borderSide: BorderSide(
-                          color: Colors.grey.shade200,
-                          width: 2,
-                        ),
-                      ),
-                      hintText: "Maxsulotni izlash...",
-                    ),
-                  ),
-                  SizedBox(height: 10.sp),
-                  SizedBox(
-                    height: 450.h,
-                    child: ListView.separated(
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 5,
-                        vertical: 5,
-                      ),
-                      itemCount: productHistory.length,
-                      separatorBuilder: (context, index) => const SizedBox(
-                        height: 10,
-                      ),
-                      itemBuilder: (context, index) {
-                        final product = productHistory[index];
-                        return Container(
-                          decoration: BoxDecoration(
-                            color: Colors.blueGrey.shade50,
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(13),
-                            ),
+                    const SizedBox(height: 20),
+                    TextField(
+                      decoration: InputDecoration(
+                        isDense: true,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(15),
                           ),
-                          child: ListTile(
+                          borderSide: BorderSide(
+                            color: Colors.grey.shade200,
+                            width: 2,
+                          ),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(15),
+                          ),
+                          borderSide: BorderSide(
+                            color: Colors.grey.shade200,
+                            width: 2,
+                          ),
+                        ),
+                        hintText: "Maxsulotni izlash...",
+                      ),
+                    ),
+                    SizedBox(height: 10.sp),
+                    SizedBox(
+                      height: 450.h,
+                      child: ListView.separated(
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 5,
+                          vertical: 5,
+                        ),
+                        itemCount: productHistory.reversed.length - 1,
+                        separatorBuilder: (context, index) => const SizedBox(
+                          height: 10,
+                        ),
+                        itemBuilder: (context, index) {
+                          final product = productHistory[index + 1];
+                          return ListTile(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(13),
+                              side: BorderSide.none,
+                            ),
+                            tileColor: Colors.blueGrey.shade50,
                             title: Text(
                               "${index + 1}. ${product.name}",
                               style: TextStyle(
@@ -113,46 +115,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                 fontSize: 18.sp,
                                 color: Colors.black87,
                               ),
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "${product.delivery.phone}",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 18.sp,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-
-                                Text(
-                                  "${product.delivery.name}",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 18.sp,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-
-                                Text(
-                                  "${product.warehouse.name}",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 18.sp,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-
-                                Text(
-                                  "${product.warehouse.address}",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 18.sp,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                              ],
                             ),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -182,12 +144,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                 ),
                               ],
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               );
             }
           },

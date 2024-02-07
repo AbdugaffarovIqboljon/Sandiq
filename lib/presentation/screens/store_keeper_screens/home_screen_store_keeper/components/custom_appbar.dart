@@ -1,11 +1,8 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:sandiq/domain/model/user_model.dart';
-import 'package:sandiq/services/user_service/token_manager.dart';
 
-class CustomAppBarStoreKeeper extends StatefulWidget
-    implements PreferredSizeWidget {
+class CustomAppBarStoreKeeper extends StatefulWidget {
   final void Function(bool) onMenuTapped;
 
   const CustomAppBarStoreKeeper({
@@ -14,19 +11,17 @@ class CustomAppBarStoreKeeper extends StatefulWidget
   }) : super(key: key);
 
   @override
-  Size get preferredSize => Size.fromHeight(140.sp);
-
-  @override
   State<CustomAppBarStoreKeeper> createState() =>
       _CustomAppBarStoreKeeperState();
 }
 
 class _CustomAppBarStoreKeeperState extends State<CustomAppBarStoreKeeper> {
   late Future<User> _userFuture;
+  UserService userService = UserService();
 
   @override
   void initState() {
-    _userFuture = fetchUserData();
+    _userFuture = userService.fetchUserData();
     super.initState();
   }
 
@@ -142,25 +137,5 @@ class _CustomAppBarStoreKeeperState extends State<CustomAppBarStoreKeeper> {
         ),
       ),
     );
-  }
-}
-
-Future<User> fetchUserData() async {
-  String? token = await TokenManager.getToken();
-  Dio dio = Dio();
-  Options options = Options(
-    headers: {
-      'Authorization': 'Bearer $token',
-    },
-  );
-
-  try {
-    Response response = await dio.get(
-      'https://e-work-backend-production.up.railway.app/auth/users/me',
-      options: options,
-    );
-    return User.fromJson(response.data);
-  } catch (e) {
-    throw Exception('Failed to fetch user data $e');
   }
 }

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:sandiq/domain/model/product_delivery.dart';
 import 'package:sandiq/domain/model/product_model.dart';
 import 'package:sandiq/presentation/screens/store_keeper_screens/home_screen_store_keeper/components/product_add_button.dart';
 
 import '../components/animation_builder_incoming_product_screen.dart';
+import '../components/empty_product_case.dart';
+import '../components/incoming_products_content.dart';
 import '../incoming_product_screen/incoming_product_screen.dart';
 
 class OutGoingProductScreenContent extends StatefulWidget {
@@ -21,6 +24,7 @@ class _OutGoingProductScreenContentState
   late Animation<double> _animation;
   bool _toggleTextFields = false;
   bool isButtonTapped = false;
+  late List<bool> isListTileTappedList;
   bool isSaved = false;
 
   TextEditingController textEditingNameController = TextEditingController();
@@ -32,10 +36,29 @@ class _OutGoingProductScreenContentState
   List<Widget> savedProductsWidgets = [];
   late Widget productWidget;
   ProductService productService = ProductService();
+  List<DeliveredProduct> productList = [];
+
+  Future<void> fetchOutGoingProducts() async {
+    try {
+      List<DeliveredProduct> incomingProducts =
+          await productService.fetchOutGoingProducts();
+      setState(() {
+        productList = incomingProducts;
+        isListTileTappedList =
+            List.generate(productList.length, (index) => false);
+      });
+    } catch (e) {
+      print('Error fetching incoming products: $e');
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+
+    fetchOutGoingProducts();
+
+    isListTileTappedList = List.generate(productList.length, (index) => false);
 
     _animationController = AnimationController(
       vsync: this,
@@ -62,9 +85,10 @@ class _OutGoingProductScreenContentState
         amount: int.tryParse(textEditingProductAmountController.text) ?? 1,
         description: "OutGoing Product =>",
         deliveryName: textEditingNameController.text,
-        deliveryPhone: textEditingPhoneController.text,
+        deliveryPhone: "+998${textEditingPhoneController.text}",
         status: false,
       );
+      fetchOutGoingProducts();
     } catch (e, l) {
       print('Error fetching data: $e');
       print('Location of fetching data: $l');
@@ -95,7 +119,7 @@ class _OutGoingProductScreenContentState
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: _toggleTextFields ? 5 : 30.sp),
+          SizedBox(height: _toggleTextFields ? 5 : 20.sp),
           _toggleTextFields
               ? MyAnimationBuilder(
                   animationController: _animationController,
@@ -108,27 +132,9 @@ class _OutGoingProductScreenContentState
                       textEditingProductAmountController,
                   productService: productService,
                 )
-              : Column(
-                  children: [
-                    Image(
-                      image: const AssetImage(
-                        "assets/images/img_empty_box.png",
-                      ),
-                      height: 120.sp,
-                      width: 120.sp,
-                    ),
-                    SizedBox(height: 20.sp),
-                    Text(
-                      "Qo'shilgan maxsulotlar shu yerda ko'rinadi",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w200,
-                        fontSize: 16.sp,
-                        color: Colors.black87,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
+              : productList.isNotEmpty
+                  ? IncomingProductsContent(productList: productList)
+                  : buildEmptyProductCase(),
           SizedBox(height: _toggleTextFields ? 5 : 30.sp),
           MyProductAddButton(
             onPressed: () {

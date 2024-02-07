@@ -1,85 +1,93 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:sandiq/domain/model/product_model.dart';
 import 'package:sandiq/presentation/screens/manager_role_screen/home_screen_manager_role/components/my_card.dart';
 import 'package:sandiq/services/constants/colors.dart';
 
+import '../../../../domain/model/raw_materials_model.dart';
 
 class HomeScreenManagerRole extends StatefulWidget {
-  const HomeScreenManagerRole({super.key});
+  const HomeScreenManagerRole({Key? key}) : super(key: key);
 
   @override
   State<HomeScreenManagerRole> createState() => _HomeScreenManagerRoleState();
 }
 
 class _HomeScreenManagerRoleState extends State<HomeScreenManagerRole> {
+  late ProductService productService;
+  List<MyCard> products = [];
+  RawMaterials? rawMaterials;
 
-  List products = [
-    MyCard(
-      product: 'Mix',
-      price: '5.000 so\'m',
-      volume: '500 kg',
-      totalPrice: '2.500.000 so\'m',
-    ),
-    MyCard(
-      product: 'Siment',
-      price: '2.000 so\'m',
-      volume: '3000 kg',
-      totalPrice: '6.000.000 so\'m',
-    ),
-    MyCard(
-      product: 'Yog\'och',
-      price: '24.000 so\'m',
-      volume: '5000 metr',
-      totalPrice: '120.000.000 so\'m',
-    ),
-    MyCard(
-      product: 'Armatura',
-      price: '7.200 so\'m',
-      volume: '1000 metr',
-      totalPrice: '7.200.000 so\'m',
-    ),
-    MyCard(
-      product: 'Armatura',
-      price: '7.200 so\'m',
-      volume: '1000 metr',
-      totalPrice: '7.200.000 so\'m',
-    ),
-    MyCard(
-      product: 'Armatura',
-      price: '7.200 so\'m',
-      volume: '1000 metr',
-      totalPrice: '7.200.000 so\'m',
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    productService = ProductService();
+    fetchHomeDataManagerRole();
+  }
+
+  Future<void> fetchHomeDataManagerRole() async {
+    RawMaterials? data = await productService.fetchHomeDataManagerRole(2);
+
+    if (data != null) {
+      setState(() {
+        rawMaterials = data;
+        products = rawMaterials!.productSets
+            .expand((set) => set.dataArray)
+            .expand((data) => data.products)
+            .map((product) {
+          String productName = product.name;
+          String productPrice = product.price;
+          String productAmount = product.amount;
+          String productSize = product.size;
+          String totalPrice = rawMaterials!.totalPrice.toString();
+          return MyCard(
+            product: productName,
+            price: "$productPrice so'm",
+            totalPrice: "$totalPrice so'm",
+            volume: "$productAmount $productSize",
+          );
+        }).toList();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
+      extendBodyBehindAppBar: true,
       backgroundColor: CustomColors.kWhite,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 36),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Xomashyolar',
-              style: TextStyle(
-                fontWeight: FontWeight.w800,
-                fontSize: 18,
+      body: SingleChildScrollView(
+        primary: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 36),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 10),
+              const Text(
+                'Xomashyolar',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 20,
+                ),
               ),
-            ),
-            const SizedBox(height: 12),
-            Container(
-              width: double.infinity,
-              height: MediaQuery.of(context).size.height / 1.8,
-              color: Colors.transparent,
-              child: ListView.builder(
-                itemBuilder: (context, index) {
-                  return products[index];
-                },
-                itemCount: products.length,
+              const SizedBox(height: 5),
+              SizedBox(
+                height: 570.sp,
+                child: ListView.builder(
+                  primary: true,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return products.isEmpty
+                        ? const CircularProgressIndicator.adaptive()
+                        : products[index];
+                  },
+                  itemCount: products.length,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
